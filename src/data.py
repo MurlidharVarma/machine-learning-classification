@@ -41,3 +41,30 @@ def encode_features(frame):
         encoded[TARGET] = encoded[TARGET].map(CLASS_MAP)
 
     return encoded
+
+
+def make_split(encoded, deduplicate=True, test_size=TEST_SIZE, seed=SEED):
+    """Stratified train/test split, returning (X_train, X_test, y_train, y_test).
+
+    deduplicate=True is the default and the headline configuration. 269 of the
+    520 records are exact repeats of another record, so a plain split places
+    identical rows on both sides and the resulting test score partly measures
+    memorisation rather than generalisation. Dropping duplicates before the split
+    guarantees no response profile appears in both halves.
+
+    deduplicate=False reproduces the conventional split for the contrast reported
+    in the README.
+
+    Stratified because the classes are uneven and the dataset is small enough
+    that an unstratified draw shifts the test-set balance noticeably.
+    """
+    frame = encoded.drop_duplicates() if deduplicate else encoded
+
+    return train_test_split(
+        frame[FEATURES],
+        frame[TARGET],
+        test_size=test_size,
+        stratify=frame[TARGET],
+        random_state=seed,
+    )
+
