@@ -1,0 +1,54 @@
+{
+  "student_name": "Murlidhar Ravi Geetha Varma",
+  "student_id": "2025AC05598",
+  "trained_at": "2026-08-16T12:39:59+00:00",
+  "python_version": "3.12.12",
+  "sklearn_version": "1.7.2",
+  "seed": 5598,
+  "deduplicated": true,
+  "test_size": 0.3,
+  "n_train": 175,
+  "n_test": 76,
+  "metrics": {
+    "Logistic Regression": {
+      "Accuracy": 0.921053,
+      "AUC": 0.965545,
+      "Precision": 0.96,
+      "Recall": 0.923077,
+      "F1": 0.941176,
+      "MCC": 0.822777
+    },
+    "Decision Tree": {
+      "Accuracy": 0.894737,
+      "AUC": 0.866987,
+      "Precision": 0.907407,
+      "Recall": 0.942308,
+      "F1": 0.924528,
+      "MCC": 0.752281
+    },
+    "kNN": {
+      "Accuracy": 0.881579,
+      "AUC": 0.955529,
+      "Precision": 0.977778,
+      "Recall": 0.846154,
+      "F1": 0.907216,
+      "MCC": 0.760921
+    },
+    "Naive Bayes": {
+      "Accuracy": 0.907895,
+      "AUC": 0.963141,
+      "Precision": 0.959184,
+      "Recall": 0.903846,
+      "F1": 0.930693,
+      "MCC": 0.796916
+    },
+    "Random Forest": {
+      "Accuracy": 0.947368,
+      "AUC": 0.983173,
+      "Precision": 0.98,
+      "Recall": 0.942308,
+      "F1": 0.960784,
+      "MCC": 0.882444
+    }
+  }
+}
