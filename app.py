@@ -24,6 +24,7 @@ from src.config import (
     STUDENT_NAME,
     SYMPTOM_FEATURES,
     TARGET,
+    TEST_DATA_ON_GITHUB,
     TEST_DATA_PATH,
 )
 from src.data import (
@@ -77,19 +78,7 @@ st.markdown(
 
 @st.cache_resource
 def load_models():
-    """Load the five fitted pipelines once per server process.
-
-    cache_resource rather than cache_data: these are live objects meant to be
-    shared, not values to be copied per session.
-
-    If any file is missing or refuses to unpickle -- the usual cause being a
-    scikit-learn version on the serving side that differs from the one that
-    wrote the file -- the pipelines are refitted from the bundled data instead.
-    Fitting all five takes well under a tenth of a second on 175 rows, so the
-    fallback costs nothing and prevents a version skew from taking the whole app
-    down. The banner tells the user which path was taken, because refitted
-    models are not guaranteed to be byte-identical to the committed ones.
-    """
+    """Load the five fitted pipelines once per server process"""
     try:
         models = {name: joblib.load(model_path(name)) for name in build_pipelines()}
         return models, None
@@ -175,6 +164,16 @@ with st.sidebar:
         "column with the true labels."
     )
 
+    st.download_button(
+        "Download test_data.csv",
+        data=TEST_DATA_PATH.read_bytes(),
+        file_name=TEST_DATA_PATH.name,
+        mime="text/csv",
+        width="stretch",
+        help="The 76-row held-out split, labelled, in its original Yes/No form.",
+    )
+    st.caption(f"Or [view it on GitHub]({TEST_DATA_ON_GITHUB}) to browse the rows in a table.")
+
     st.divider()
     st.header("Model")
     selected = st.selectbox("Examine in detail", list(models))
@@ -239,10 +238,7 @@ with comparison_tab:
         )
 
         table = metrics_table(scores)
-        # st.table, not st.dataframe. The dataframe widget draws into a canvas
-        # grid that intermittently fails to repaint after a tab switch, leaving
-        # the row labels visible and every number blank. This table is the
-        # headline result of the whole app, so it renders as plain HTML instead.
+
         st.table(
             table.style
             .format("{:.4f}")
@@ -264,8 +260,7 @@ with comparison_tab:
             st.pyplot(roc_figure(models, X, y, {n: s["AUC"] for n, s in scores.items()}))
         with right:
             st.markdown("**Ranking by each metric**")
-            # Headers abbreviated so six numeric columns fit the half-width
-            # container without the last one being clipped.
+
             short = {"Accuracy": "Acc", "Precision": "Prec", "Recall": "Rec"}
             st.table(
                 pd.DataFrame({
@@ -292,8 +287,6 @@ with detail_tab:
         at_threshold = compute_metrics(y, thresholded, probabilities)
 
         # One row of tiles that tracks the slider, rather than a static row plus a
-        # second identical row -- at the default 0.50 the two were the same numbers
-        # twice. Deltas appear only once the slider has actually been moved.
         default = scores[selected]
         for column, metric in zip(st.columns(6), METRIC_ORDER):
             delta = at_threshold[metric] - default[metric]
@@ -327,16 +320,11 @@ with detail_tab:
                 target_names=[NEGATIVE_LABEL, POSITIVE_LABEL],
                 output_dict=True, zero_division=0,
             )
-            # The "accuracy" entry is a bare float among per-class dicts, so
-            # DataFrame broadcasts it across all four columns and reports an
-            # "accuracy precision" and an "accuracy support" that mean nothing.
-            # Dropped here; accuracy already has its own tile above.
+
             report.pop("accuracy", None)
             report_frame = pd.DataFrame(report).T
             report_frame["support"] = report_frame["support"].astype(int)
-            # st.table rather than st.dataframe: the latter paints into a canvas
-            # grid that leaves its columns blank at this width in some browsers.
-            # A four-row summary has nothing to gain from a scrollable grid.
+
             st.table(
                 report_frame.style.format(
                     {"precision": "{:.3f}", "recall": "{:.3f}",

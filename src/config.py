@@ -8,6 +8,9 @@ from pathlib import Path
 STUDENT_NAME = "Murlidhar Ravi Geetha Varma"
 STUDENT_ID = "2025AC05598"
 
+REPO_URL = "https://github.com/MurlidharVarma/machine-learning-classification"
+TEST_DATA_ON_GITHUB = f"{REPO_URL}/blob/main/test_data.csv"
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 DATA_PATH = PROJECT_ROOT / "data" / "diabetes_data_upload.csv"
