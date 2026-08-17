@@ -58,3 +58,11 @@ def build_pipelines():
             ("classifier", RandomForestClassifier(random_state=SEED)),
         ]),
     }
+
+def model_path(name):
+    """Map a display name to its .joblib path.
+
+    Derived rather than held in a lookup table, so the script that writes the
+    files and the app that reads them cannot disagree about a filename.
+    """
+    return MODEL_DIR / f"{name.lower().replace(' ', '_')}.joblib"

@@ -68,3 +68,32 @@ def make_split(encoded, deduplicate=True, test_size=TEST_SIZE, seed=SEED):
         random_state=seed,
     )
 
+
+def describe_problem(frame, require_target=True):
+    """Return a readable reason the frame cannot be scored, or None if it is fine.
+
+    Lives here rather than in app.py so the checks are testable without starting
+    a Streamlit session, and so the app and the training code agree on what a
+    valid input file looks like.
+    """
+    if frame.empty:
+        return "The file contains no rows."
+
+    missing = [column for column in FEATURES if column not in frame.columns]
+    if missing:
+        return f"Missing {len(missing)} required feature column(s): " + ", ".join(missing)
+
+    if require_target and TARGET not in frame.columns:
+        return (
+            f"No '{TARGET}' column found. Upload the labelled test split — metrics "
+            "cannot be computed without the true labels."
+        )
+
+    return None
+
+
+def unmapped_columns(encoded):
+    """Columns holding NaN after encoding, i.e. those with unexpected values."""
+    checked = [column for column in FEATURES + [TARGET] if column in encoded.columns]
+
+    return [column for column in checked if encoded[column].isna().any()]
