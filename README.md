@@ -11,21 +11,21 @@ M.Tech (AIML) · Machine Learning · Assignment 2
 ---
 ## Table of Content
 
-- [a. Problem statement](#a-problem-statement)
-- [b. Dataset description](#b-dataset-description)
-- [c. Links](#c-links)
+- [Problem statement](#problem-statement)
+- [Dataset description](#dataset-description)
+- [Links](#links)
   - [1. GitHub repository](#1-github-repository)
   - [2. Live Streamlit App](#2-live-streamlit-app)
-- [d. Models used](#d-models-used)
+- [Models used](#models-used)
   - [Comparison table](#comparison-table)
   - [Observations](#observations)
 - [Streamlit application](#streamlit-application)
 - [Running locally](#running-locally)
 - [Reproducibility](#reproducibility)
-
+- [BITS Lab Screenshot](#bits-lab-execution-screenshots)
 ---
 
-## a. Problem statement
+## Problem statement
 
 Predict whether an individual is at risk of early-stage diabetes from a short symptom questionnaire. This is a binary classification problem.
 
@@ -33,7 +33,7 @@ Diagnosing diabetes normally requires a blood test. A questionnaire that reliabl
 
 The two error types do not cost the same. A false negative is a missed case that receives no follow-up; a false positive is one unnecessary blood test. Recall and MCC are therefore weighted more heavily than raw accuracy in the observations below.
 
-## b. Dataset description
+## Dataset description
 
 **Source:** UCI Machine Learning Repository, dataset ID 529 - *Early Stage Diabetes Risk Prediction* <https://archive.ics.uci.edu/dataset/529/early+stage+diabetes+risk+prediction+dataset>
 
@@ -55,6 +55,10 @@ Collected by direct questionnaire from patients of Sylhet Diabetes Hospital, Syl
 | Binary, Male/Female | 1 | `Gender` |
 | Binary, Yes/No | 14 | Polyuria, Polydipsia, sudden weight loss, weakness, Polyphagia, Genital thrush, visual blurring, Itching, Irritability, delayed healing, partial paresis, muscle stiffness, Alopecia, Obesity |
 
+![Shift in Positive Rate given symptom reported](img/feature_positive_rate.png)
+
+![Correlation heatmap](img/feature_correlation.png)
+
 **Characteristics that shaped the analysis**
 
 - **269 of the 520 records are exact duplicates**, leaving 251 distinct response profiles. No profile carries conflicting labels, so this is repetition rather than inconsistent labelling. A conventional `train_test_split` therefore places identical rows on both sides of the split, and a model that memorises a training row scores it correctly at test time without having generalised. **Every headline result below is computed after deduplication**; the conventional split is reported alongside as a contrast.
@@ -65,7 +69,7 @@ Collected by direct questionnaire from patients of Sylhet Diabetes Hospital, Syl
 
 Full exploratory analysis in [`model/diabetes_risk_analysis.ipynb`](model/diabetes_risk_analysis.ipynb), section 1.
 
-## c. Links 
+## Links 
 ### 1. GitHub repository
 
 **Repository:** [`https://github.com/MurlidharVarma/machine-learning-classification.git`](https://github.com/MurlidharVarma/machine-learning-classification.git)
@@ -85,7 +89,7 @@ Every transformation is defined once in `src/` and imported by the training scri
 
 **Streamlit App:** [`https://machine-learning-classification-2025ac05598.streamlit.app/`](https://machine-learning-classification-2025ac05598.streamlit.app/)
 
-## d. Models used
+## Models used
 
 All five models are trained on an identical stratified 70/30 split of the 251 distinct response profiles - 175 train, 76 test - with `random_state = 5598` throughout.
 
@@ -119,6 +123,11 @@ Held-out test set of 76 distinct profiles, none of which appears in training. AU
 
 Random Forest is best or joint-best on all 6 metrics - outright on 5, tying the Decision Tree on recall at 0.9423.
 
+#### ROC Curve
+![ROC Curve](img/ROC.png)
+
+#### Confusion Matrix
+!["Confusion Matrix"](img/Confusion_Matrix.png)
 ### Observations
 
 Every figure quoted below is printed by [`model/diabetes_risk_analysis.ipynb`](model/diabetes_risk_analysis.ipynb) or by [`model/train.py`](model/train.py).
@@ -169,3 +178,8 @@ jupyter lab                              # model/diabetes_risk_analysis.ipynb
 - `model/metadata.json` records the versions, seed, split sizes and metrics of the run that produced the committed model files.
 - `model/train.py` runs the whole analysis end to end from a clean interpreter; the notebook runs top to bottom from a fresh kernel and is committed with outputs intact.
 
+## BITS Lab Execution Screenshots
+![1](img/BITS_Lab_Screenshot_1.png)
+![2](img/BITS_Lab_Screenshot_2.png)
+![3](img/BITS_Lab_Screenshot_3.png)
+![4](img/BITS_Lab_Screenshot_4.png)
